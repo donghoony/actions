@@ -19,13 +19,12 @@ jobs:
         PR_TITLE: ${{ github.event.pull_request.title }}
         PR_URL: ${{ github.event.pull_request.html_url }}
       run: |
-        ASSIGNEES_MENTION=$(echo "$ASSIGNEES" | jq -r 'map(.login) | join(", @")')
-        ASSIGNEES_MENTION="@${ASSIGNEES_MENTION}"
+        ASSIGNEES_MENTION=$(echo "$ASSIGNEES" | jq -r 'map("@" + .login) | join(", ")')
         EMBED_MESSAGE=$(jq -n \
           --arg title "$PR_TITLE" \
           --arg url "$PR_URL" \
-          --arg assignees "$ASSIGNEES_MENTION" \
-          '{embeds: [{title: $title, url: $url, description: "Assigned to: " + $assignees, color: 5814783}]}')
+          --arg assignees "Assigned to: $ASSIGNEES_MENTION" \
+          '{embeds: [{title: $title, url: $url, description: $assignees, color: 5814783}]}')
         curl -H "Content-Type: application/json" \
           -d "$EMBED_MESSAGE" \
           $DISCORD_WEBHOOK_URL
