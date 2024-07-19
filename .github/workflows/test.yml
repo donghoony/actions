@@ -1,0 +1,27 @@
+name: Build test with Gradle
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to current repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK Corretto using cached gradle dependencies
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: 17
+          cache: 'gradle'
+
+      - name: Gradle test only
+        run: ./gradlew test
