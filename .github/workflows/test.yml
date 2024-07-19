@@ -23,5 +23,8 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
-      - name: Gradle test only
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build and test with gradle
         run: ./gradlew test
