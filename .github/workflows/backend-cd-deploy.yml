@@ -11,7 +11,7 @@ on:
 
 env:
   ARTIFACT_NAME: review-me-dev.jar
-  ARTIFACT_DIRECTORY: build/libs
+  ARTIFACT_DIRECTORY: ./build/libs
 
 jobs:
   build:
@@ -77,4 +77,7 @@ jobs:
       - name: Start server
         run: |
           echo $(pwd)
+          echo $(pwd | ls -al)
+          echo "--"
+          echo $(pwd | ls -al ${{ env.ARTIFACT_DIRECTORY }}) 
           sudo nohup java -jar ${{ env.ARTIFACT_DIRECTORY }}/${{ env.ARTIFACT_NAME }} --server.port=80 &
