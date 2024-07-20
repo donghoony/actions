@@ -37,6 +37,10 @@ jobs:
       - name: Build and test with gradle
         run: ./gradlew clean bootJar
 
+      - name: Rename artifact file
+        run: |
+          mv ${{ env.ARTIFACT_DIRECTORY }}/*.jar ${{ env.ARTIFACT_DIRECTORY }}/${{ env.ARTIFACT_NAME }}.jar
+
       - name: Upload created artifact
         uses: actions/upload-artifact@v4
         with:
@@ -76,8 +80,4 @@ jobs:
 
       - name: Start server
         run: |
-          echo $(pwd)
-          echo $(pwd | ls -al)
-          echo "--"
-          echo $(pwd | ls -al ${{ env.ARTIFACT_DIRECTORY }}) 
           sudo nohup java -jar ${{ env.ARTIFACT_DIRECTORY }}/${{ env.ARTIFACT_NAME }} --server.port=80 &
