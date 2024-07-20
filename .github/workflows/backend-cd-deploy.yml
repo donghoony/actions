@@ -76,7 +76,7 @@ jobs:
         if: env.server_running == 'true'
         run: |
           echo "Gracefully shutting down process ${{ env.PID }}"
-          kill -15 ${{ env.PID }}
+          sudo kill -15 ${{ env.PID }}
           tail --pid=${{ env.PID }} -f /dev/null
 
       - name: Start server
