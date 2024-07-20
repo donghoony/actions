@@ -11,7 +11,7 @@ on:
 
 env:
   ARTIFACT_NAME: review-me-dev.jar
-  ARTIFACT_DIRECTORY: ./build/libs
+  ARTIFACT_DIRECTORY: build/libs
 
 jobs:
   build:
