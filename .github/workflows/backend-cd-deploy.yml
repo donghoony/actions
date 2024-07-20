@@ -76,4 +76,5 @@ jobs:
 
       - name: Start server
         run: |
+          echo $(pwd)
           sudo nohup java -jar ${{ env.ARTIFACT_DIRECTORY }}/${{ env.ARTIFACT_NAME }} --server.port=80 &
