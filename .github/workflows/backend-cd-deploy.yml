@@ -61,10 +61,10 @@ jobs:
           PID=$(lsof -t -i :http)
           if [ -n "$PID" ]; then
             echo "Found process running on port http: $PID"
-            echo "server_running=true" >> $GITHUB_ENV
+            echo "server_running=true" >> "$GITHUB_ENV"
           else
             echo "Process not found running on port http!"
-            echo "server-running=false" >> $GITHUB_ENV
+            echo "server-running=false" >> "$GITHUB_ENV"
           fi
 
       - name: Stop server if available (gracefully)
