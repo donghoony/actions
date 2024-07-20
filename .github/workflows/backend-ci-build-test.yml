@@ -12,12 +12,6 @@ on:
 
 jobs:
   build:
-    permissions:
-      contents: read
-      issues: read
-      checks: write
-      pull-requests: write # Only needed on PR-Comment mode
-
     runs-on: ubuntu-latest
 
     steps:
