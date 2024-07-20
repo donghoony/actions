@@ -57,19 +57,22 @@ jobs:
 
       - name: Check if the port 80 is in use
         run: |
+          echo "Checking ports on http..."
           PID=$(lsof -t -i :http)
           if [ -n "$PID" ]; then
+            echo "Found process running on port http: $PID"
             echo "server_running=true" >> $GITHUB_ENV
-            echo "server_pid=$PID" >> $GITHUB_ENV
           else
+            echo "Process not found running on port http!"
             echo "server-running=false" >> $GITHUB_ENV
           fi
 
       - name: Stop server if available (gracefully)
         if: env.server_running == 'true'
         run: |
-          kill -15 $server_pid
-          tail --pid=$server_pid -f /dev/null
+          echo "Gracefully shutting down process $PID"
+          kill -15 $PID
+          tail --pid=$PID -f /dev/null
 
       - name: Start server
         run: |
