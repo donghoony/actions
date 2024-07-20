@@ -1,0 +1,76 @@
+name: CD using Github self-hosted runner
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+#    paths:
+#      - 'backend/**'
+
+env:
+  ARTIFACT_NAME: review-me-dev.jar
+  ARTIFACT_DIRECTORY: ./build/libs
+
+jobs:
+  build:
+    name: Build Jar file and upload artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to current repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK Corretto using cached gradle dependencies
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: 17
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.8
+
+      - name: Build and test with gradle
+        run: ./gradlew clean bootJar
+
+      - name: Upload created artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.ARTIFACT_DIRECTORY }}/*.jar
+
+  deploy:
+    name: Deploy via self-hosted runner
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Download uploaded artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.ARTIFACT_DIRECTORY }}
+
+      - name: Check if the port 80 is in use
+        run: |
+          PID=$(lsof -t -i :http)
+          if [ -n "$PID" ]; then
+            echo "server_running=true" >> $GITHUB_ENV
+            echo "server_pid=$PID" >> $GITHUB_ENV
+          else
+            echo "server-running=false" >> $GITHUB_ENV
+          fi
+
+      - name: Stop server if available (gracefully)
+        if: env.server_running == 'true'
+        run: |
+          kill -15 $server_pid
+          tail --pid=$server_pid -f /dev/null
+
+      - name: Start server
+        run: |
+          sudo nohup java -jar ${{ env.ARTIFACT_DIRECTORY }}/${{ env.ARTIFACT_NAME }}.jar --server.port=80 &
