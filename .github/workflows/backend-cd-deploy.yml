@@ -62,7 +62,7 @@ jobs:
       - name: Find ${{ env.ARTIFACT_NAME }} process
         run: |
           echo "Checking processes..."
-          PID=$(ps -ef | grep ${{ env.ARTIFACT_NAME}}.jar | awk '{print $2}' || true)
+          PID=$(ps -ef | grep ${{ env.ARTIFACT_NAME}}.jar | grep java | awk '{print $2}' || true)
           if [ -n "$PID" ]; then
             echo "Found process: $PID"
             echo "server_running=true" >> "$GITHUB_ENV"
@@ -76,10 +76,8 @@ jobs:
         if: env.server_running == 'true'
         run: |
           echo "Gracefully shutting down process ${{ env.PID }}"
-          for EPID in ${{ env.PID }}; do
-            sudo kill -15 $EPID
-            tail --pid=$EPID -f /dev/null
-          done
+          sudo kill -15 ${{ env.PID }}
+          tail --pid=$EPID -f /dev/null
 
       - name: Start server
         run: |
