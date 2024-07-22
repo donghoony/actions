@@ -59,16 +59,16 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
           path: ${{ env.ARTIFACT_DIRECTORY }}
 
-      - name: Check if the port 80 is in use
+      - name: Find ${{ env.ARTIFACT_NAME }} process
         run: |
-          echo "Checking ports on http..."
-          PID=$(sudo lsof -t -i :http || true)
+          echo "Checking processes..."
+          PID=$(ps -ef | grep ${{ env.ARTIFACT_NAME}}.jar | awk '{print $2}' || true)
           if [ -n "$PID" ]; then
-            echo "Found process running on port http: $PID"
+            echo "Found process: $PID"
             echo "server_running=true" >> "$GITHUB_ENV"
             echo "PID=$PID" >> "$GITHUB_ENV"
           else
-            echo "Process not found running on port http!"
+            echo "Process not found!"
             echo "server_running=false" >> "$GITHUB_ENV"
           fi
 
@@ -76,8 +76,10 @@ jobs:
         if: env.server_running == 'true'
         run: |
           echo "Gracefully shutting down process ${{ env.PID }}"
-          sudo kill -15 ${{ env.PID }}
-          tail --pid=${{ env.PID }} -f /dev/null
+          for EPID in ${{ env.PID }}; do
+            sudo kill -15 $EPID
+            tail --pid=$EPID -f /dev/null
+          done
 
       - name: Start server
         run: |
