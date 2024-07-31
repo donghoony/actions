@@ -30,9 +30,9 @@ jobs:
           PR_TITLE='${{ github.event.pull_request.title }}'
           PR_PREFIX=$(echo $PR_TITLE | cut -d ' ' -f1)
           if [ "$PR_TITLE" == '[BE]' ]; then
-            echo "PR_PREFIX=[BE]" >> $GITHUB_ENV
+            echo "PR_PREFIX='[BE]'" >> $GITHUB_ENV
           elif [ "$PR_TITLE" == '[FE]' ]; then
-            echo "PR_PREFIX=[FE]" >> $GITHUB_ENV
+            echo "PR_PREFIX='[FE]'" >> $GITHUB_ENV
           fi
           echo PR Prefix : $PR_PREFIX
 
