@@ -34,7 +34,7 @@ jobs:
           elif [ "$PR_TITLE" == '[FE]' ]; then
             echo "PR_PREFIX=FE" >> $GITHUB_ENV
           fi
-          echo PR Prefix : $PR_PREFIX
+          echo PR Prefix : ${{ env.PR_PREFIX }}
 
       - name: Notify on PR
         if: env.PR_PREFIX == 'BE' || env.PR_PREFIX == 'FE'
