@@ -90,6 +90,7 @@ jobs:
             ]
           }
           EOF
+          cat $JSON_FILE
           curl -X POST -H 'Content-type: application/json' \
           --data @$JSON_FILE \
           $WEBHOOK_URL
