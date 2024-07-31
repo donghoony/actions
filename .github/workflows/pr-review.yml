@@ -61,7 +61,7 @@ jobs:
           if [ "${{ github.event.review.state }}" = 'approved' ]; then
             COMMENT="PR이 Approved 되었습니다 🚀"
           else
-            COMMENT="수정 요구사항이 있어요. 반영 뒤에 다시 리뷰 요청해주세요!"
+            COMMENT="PR에 수정 요구사항이 있어요, 반영해주세요 👩‍💻"
           fi
 
           JSON_FILE=$(mktemp)
@@ -71,8 +71,8 @@ jobs:
             "embeds": [
               {
                 "author": {
-                    "name": "$REVIEWER",
-                    "icon_url": "https://github.com/$REVIEWER.png"
+                    "name": "$PR_AUTHOR",
+                    "icon_url": "https://github.com/$PR_AUTHOR.png"
                 },
                 "title": "$PR_TITLE",
                 "url": "$PR_URL",
@@ -82,8 +82,8 @@ jobs:
                 },
                 "fields": [
                   {
-                    "name": "작성자",
-                    "value": "<@$AUTHOR_DISCORD_ID>",
+                    "name": "리뷰어",
+                    "value": "<@$REVIEWER_DISCORD_ID>",
                     "inline": true
                   }
                 ],
