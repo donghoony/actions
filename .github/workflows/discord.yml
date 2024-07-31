@@ -39,12 +39,26 @@ jobs:
           fi
           echo PR Prefix : $PR_PREFIX
           echo PR Prefix on env : ${{ env.PR_PREFIX }}
-
+  
   notify-on-pr:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    needs: find-prefix
     steps:
+      - name: Find prefix for PR title
+        run: |
+          echo "Finding prefix for PR title"
+          PR_TITLE='${{ github.event.pull_request.title }}'
+          PR_PREFIX=$(echo $PR_TITLE | cut -d ' ' -f1)
+          if [ "$PR_PREFIX" = '[BE]' ]; then
+            echo Backend PR Found!
+            echo "PR_PREFIX=BE" >> $GITHUB_ENV
+          elif [ "$PR_PREFIX" = '[FE]' ]; then
+            echo Frontend PR Found!
+            echo "PR_PREFIX=FE" >> $GITHUB_ENV
+          fi
+          echo PR Prefix : $PR_PREFIX
+          echo PR Prefix on env : ${{ env.PR_PREFIX }}
+
       - name: Notify on PR
         if: env.PR_PREFIX == 'BE' || env.PR_PREFIX == 'FE'
         run: |
@@ -90,13 +104,7 @@ jobs:
           $WEBHOOK_URL
           rm $JSON_FILE
   
-
-  mention-on-review:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_review'
-    needs: find-prefix
-    steps:
-      - name: Notify on PR Review
+      - name: notify-on-issue
         if: github.event.review.state == 'approved' || github.event.review.state == 'changes_requested'
         run: |
           echo "Notify on Discord"
@@ -146,7 +154,6 @@ jobs:
               ]
             }
             EOF
-          
             cat $JSON_FILE
             curl -X POST -H 'Content-type: application/json' \
             --data @$JSON_FILE \
