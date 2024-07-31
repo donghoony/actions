@@ -1,7 +1,7 @@
 name: Discord Notification on CI/CD
 
 on:
-  pull_request_review: 
+  pull_request_review:
     types: [ submitted, edited ]
 
 env:
@@ -35,7 +35,7 @@ jobs:
           echo PR Prefix : $PR_PREFIX
           echo PR Prefix on env : ${{ env.PR_PREFIX }}
 
-      
+
       - name: Notify on PR Review
         if: github.event.review.state == 'approved' || github.event.review.state == 'changes_requested'
         run: |
@@ -60,8 +60,10 @@ jobs:
           
           if [ "${{ github.event.review.state }}" = 'approved' ]; then
             COMMENT="PR Approved 되었습니다 🚀"
+            COLOR=65305
           else
             COMMENT="PR에 수정 요구사항이 있습니다 👀"
+            COLOR=16736293
           fi
 
           JSON_FILE=$(mktemp)
@@ -76,7 +78,7 @@ jobs:
                 },
                 "title": "$PR_TITLE",
                 "url": "$PR_URL",
-                "color": 16777215,
+                "color": $COLOR,
                 "footer": {
                   "text": "2024-review-me"
                 },
