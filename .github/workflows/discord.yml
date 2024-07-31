@@ -21,9 +21,9 @@ env:
   "frontend": "1263406763382931467"
 
 jobs:
-  notify-on-pr:
+  find-prefix:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'pull_request_review'
     steps:
       - name: Find prefix for PR title
         run: |
@@ -40,6 +40,11 @@ jobs:
           echo PR Prefix : $PR_PREFIX
           echo PR Prefix on env : ${{ env.PR_PREFIX }}
 
+  notify-on-pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: find-prefix
+    steps:
       - name: Notify on PR
         if: env.PR_PREFIX == 'BE' || env.PR_PREFIX == 'FE'
         run: |
@@ -89,6 +94,7 @@ jobs:
   mention-on-review:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request_review'
+    needs: find-prefix
     steps:
       - name: Notify on PR Review
         if: github.event.review.state == 'approved' || github.event.review.state == 'changes_requested'
@@ -140,6 +146,7 @@ jobs:
               ]
             }
             EOF
+          
             cat $JSON_FILE
             curl -X POST -H 'Content-type: application/json' \
             --data @$JSON_FILE \
