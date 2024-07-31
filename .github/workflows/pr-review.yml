@@ -57,11 +57,17 @@ jobs:
             NOTIFY_ID=${{ env.frontend }}
             WEBHOOK_URL=${{ secrets.DISCORD_FE_PR_WEBHOOK_URL }}
           fi
+          
+          if [ "${{ github.event.review.state }}" = 'approved' ]; then
+            COMMENT="PR이 Approved 되었습니다 🚀"
+          else
+            COMMENT="수정 요구사항이 있어요. 반영 뒤에 다시 리뷰 요청해주세요!"
+          fi
 
           JSON_FILE=$(mktemp)
           cat > $JSON_FILE <<EOF
           {
-            "content": "<@$AUTHOR_DISCORD_ID> PR에 리뷰가 작성됐어요 🚀",
+            "content": "<@$AUTHOR_DISCORD_ID> $COMMENT",
             "embeds": [
               {
                 "author": {
