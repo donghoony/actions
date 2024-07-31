@@ -30,11 +30,14 @@ jobs:
           PR_TITLE='${{ github.event.pull_request.title }}'
           PR_PREFIX=$(echo $PR_TITLE | cut -d ' ' -f1)
           if [ "PR_PREFIX" == '[BE]' ]; then
+            echo Backend PR Found!
             echo "PR_PREFIX=BE" >> $GITHUB_ENV
           elif [ "PR_PREFIX" == '[FE]' ]; then
+            echo Frontend PR Found!
             echo "PR_PREFIX=FE" >> $GITHUB_ENV
           fi
           echo PR Prefix : $PR_PREFIX
+          echo PR Prefix on env : ${{ env.PR_PREFIX }}
 
       - name: Notify on PR
         if: env.PR_PREFIX == 'BE' || env.PR_PREFIX == 'FE'
