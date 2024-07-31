@@ -43,10 +43,10 @@ jobs:
         if: env.PR_PREFIX == 'BE' || env.PR_PREFIX == 'FE'
         run: |
           echo "Notify on Discord"
-          PR_URL=${{ github.event.pull_request.html_url }}
-          PR_TITLE=${{ github.event.pull_request.title }}
-          PR_AUTHOR=${{ github.event.sender.login }}
-          DISCORD_ID=${{ env[github.event.sender.login] }}
+          PR_URL='${{ github.event.pull_request.html_url }}'
+          PR_TITLE='${{ github.event.pull_request.title }}'
+          PR_AUTHOR='${{ github.event.sender.login }}'
+          DISCORD_ID='${{ env[github.event.sender.login] }}'
           if [ "$env.PR_PREFIX" == '[BE]' ]; then
             NOTIFY_ID=${{ env.backend }}
             WEBHOOK_URL=${{ secrets.DISCORD_BE_PR_WEBHOOK_URL }}
