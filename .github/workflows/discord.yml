@@ -61,7 +61,7 @@ jobs:
               \"embeds\": [{ \
                 \"title\": \"$PR_TITLE\", \
                 \"url\": \"$PR_URL\", \
-                \"description\": \"\", \
+                \"description\": \"${{ github.event.pull_request.body }}\", \
                 \"color\": 16777215, \
                 \"fields\": [{ \
                   \"inline\": true, \
