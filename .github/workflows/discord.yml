@@ -1,0 +1,67 @@
+name: Discord Notification on CI/CD
+
+on:
+  pull_request:
+    types: [ opened, edited ] # PR 열렸을 때 안내 메시지 전송 -> 제목 Prefix 확인
+  pull_request_review:
+    types: [ submitted ] # PR 리뷰 작성 시 멘션
+  issues:
+    types: [ opened, reopened ] # 이슈 열리면 단순 안내 메시지 전송
+
+env:
+  "donghoony": 206298119661420544
+  "chysis": 243991296060948491
+  "badahertz52": 1165830186990850110
+  "ImxYJL": 859318944195149855
+  "Kimprodp": 1164111111193366580
+  "nayonsoso": 710749110570975243
+  "skylar1220": 971312723260493834
+  "soosoo22": 1162754699099906169
+  "backend": 1263405654534525051
+  "frontend": 1263406763382931467
+
+jobs:
+  notify-on-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find prefix for PR title
+        run: |
+          echo "Finding prefix for PR title"
+          PR_TITLE=$(jq -r .pull_request.title $GITHUB_EVENT_PATH)
+          PR_PREFIX=$(echo $PR_TITLE | cut -d' ' -f1)
+          if [ "$PR_TITLE" == '[BE]' ]; then
+            echo "PR_PREFIX=[BE]" >> $GITHUB_ENV
+          elif [ "$PR_TITLE" == '[FE]' ]; then
+            echo "PR_PREFIX=[FE]" >> $GITHUB_ENV
+          fi
+
+      - name: Notify on PR
+        if: env.PR_PREFIX == '[BE]' || env.PR_PREFIX == '[FE]'
+        run: |
+          echo "Notify on Discord"
+          PR_URL=$(jq -r .pull_request.html_url $GITHUB_EVENT_PATH)
+          PR_TITLE=$(jq -r .pull_request.title $GITHUB_EVENT_PATH)
+          PR_AUTHOR=$(jq -r .pull_request.user.login $GITHUB_EVENT_PATH)
+          DISCORD_ID=${{ env[PR_AUTHOR] }}
+          if [ "$env.PR_PREFIX" == '[BE]' ]; then
+            NOTIFY_ID=${{ env.backend }}
+            WEBHOOK_URL=${{ secrets.DISCORD_BE_PR_WEBHOOK_URL }}
+          else
+            NOTIFY_ID=${{ env.frontend }}
+            WEBHOOK_URL=${{ secrets.DISCORD_FE_PR_WEBHOOK_URL }}
+          fi
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{\"content\": \"<@$NOTIFY_ID>\", \
+                     \"embeds\": [{ \
+                       \"title\": \"🔥 새로운 Pull Request가 등록됐어요!\", \
+                       \"description\": \"[$PR_TITLE]($PR_URL)\", \
+                       \"color\": 16777215 \
+                     }], \
+                     \"fields\": [{ \
+                       \"name\": \"\", \
+                       \"value\": \"<@$DISCORD_ID>\", \
+                       \"inline\": true \
+                     }], \
+                     \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\" \
+                    }" \
+            $WEBHOOK_URL
