@@ -104,8 +104,8 @@ jobs:
           $WEBHOOK_URL
           rm $JSON_FILE
   
-      - name: notify-on-issue
-        if: github.event.review.state == 'approved' || github.event.review.state == 'changes_requested'
+      - name: notify-on-review
+        if: github.event_name == 'pull_request_review' && (github.event.review.state == 'approved' || github.event.review.state == 'changes_requested')
         run: |
           echo "Notify on Discord"
           
