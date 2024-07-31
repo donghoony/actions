@@ -63,7 +63,7 @@ jobs:
               \"embeds\": [{ \
                 \"title\": \"$PR_TITLE\", \
                 \"url\": \"$PR_URL\", \
-                \"description\": \"TRUNCATED_BODY\", \
+                \"description\": \"$TRUNCATED_BODY\", \
                 \"color\": 16777215, \
                 \"fields\": [{ \
                   \"inline\": true, \
