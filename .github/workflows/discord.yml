@@ -47,8 +47,8 @@ jobs:
           PR_TITLE='${{ github.event.pull_request.title }}'
           PR_AUTHOR='${{ github.event.sender.login }}'
           DISCORD_ID='${{ env[github.event.sender.login] }}'
-          echo Prefix: $env.PR_PREFIX
-          if [ "$env.PR_PREFIX" = 'BE' ]; then
+          echo Prefix: $env[PR_PREFIX]
+          if [ "$env[PR_PREFIX]" = 'BE' ]; then
             NOTIFY_ID=${{ env.backend }}
             WEBHOOK_URL=${{ secrets.DISCORD_BE_PR_WEBHOOK_URL }}
           else
