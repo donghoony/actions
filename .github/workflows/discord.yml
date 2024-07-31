@@ -73,7 +73,6 @@ jobs:
               {
                 "title": "$PR_TITLE",
                 "url": "$PR_URL",
-                "description": "$BODY_PREVIEW",
                 "color": 16777215,
                 "fields": [
                   {
@@ -85,7 +84,10 @@ jobs:
                 "footer": {
                   "text": "2024-review-me"
                 },
-                "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+                "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+                "thumbnail": {
+                  "url": "https://github.com/$PR_AUTHOR.png"
+                },
               }
             ]
           }
