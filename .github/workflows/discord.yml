@@ -47,6 +47,8 @@ jobs:
           PR_TITLE='${{ github.event.pull_request.title }}'
           PR_AUTHOR='${{ github.event.sender.login }}'
           DISCORD_ID='${{ env[github.event.sender.login] }}'
+          PR_BODY='${{ github.event.pull_request.body }}'
+          TRUNCATED_BODY=$(echo "$PR_BODY" | cut -c1-200)
           echo Prefix: ${{ env.PR_PREFIX }}
           if [ "${{ env.PR_PREFIX }}" = 'BE' ]; then
             NOTIFY_ID=${{ env.backend }}
@@ -61,7 +63,7 @@ jobs:
               \"embeds\": [{ \
                 \"title\": \"$PR_TITLE\", \
                 \"url\": \"$PR_URL\", \
-                \"description\": \"${{ github.event.pull_request.body }}\", \
+                \"description\": \"$TRUCATED_BODY\", \
                 \"color\": 16777215, \
                 \"fields\": [{ \
                   \"inline\": true, \
