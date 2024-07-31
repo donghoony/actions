@@ -48,7 +48,7 @@ jobs:
           PR_AUTHOR='${{ github.event.sender.login }}'
           DISCORD_ID='${{ env[github.event.sender.login] }}'
           PR_BODY='${{ github.event.pull_request.body }}'
-          ESCAPED_PREVIEW=$(echo $PR_BODY | cut -c1-200 | sed 's/"/\\"/g' | true)
+          ESCAPED_PREVIEW=$(printf "%s" "$PR_BODY" | cut -c1-200 | sed 's/"/\\"/g' | true)
           echo Prefix: ${{ env.PR_PREFIX }}
           echo Preview: $ESCAPED_PREVIEW
           if [ "${{ env.PR_PREFIX }}" = 'BE' ]; then
