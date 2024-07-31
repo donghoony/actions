@@ -23,6 +23,7 @@ env:
 jobs:
   notify-on-pr:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - name: Find prefix for PR title
         run: |
@@ -84,9 +85,10 @@ jobs:
           $WEBHOOK_URL
           rm $JSON_FILE
   
-  
+
   mention-on-review:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_review'
     steps:
       - name: Notify on PR Review
         if: github.event.review.state == 'approved' || github.event.review.state == 'changes_requested'
@@ -143,4 +145,3 @@ jobs:
             --data @$JSON_FILE \
             $WEBHOOK_URL
             rm $JSON_FILE
-          
