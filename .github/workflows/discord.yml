@@ -55,14 +55,14 @@ jobs:
             WEBHOOK_URL=${{ secrets.DISCORD_FE_PR_WEBHOOK_URL }}
           fi
           curl -X POST -H 'Content-type: application/json' \
-            --data "{\"content\": \"<@$NOTIFY_ID>\", \
+            --data "{\"content\": \"<@&$NOTIFY_ID>\", \
                      \"embeds\": [{ \
                        \"title\": \"🔥 새로운 Pull Request가 등록됐어요!\", \
                        \"description\": \"[$PR_TITLE]($PR_URL)\", \
                        \"color\": 16777215 \
                      }], \
                      \"fields\": [{ \
-                       \"name\": \"\", \
+                       \"name\": \"작성자\", \
                        \"value\": \"<@$DISCORD_ID>\", \
                        \"inline\": true \
                      }], \
