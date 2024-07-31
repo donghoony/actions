@@ -82,9 +82,6 @@ jobs:
                   "text": "2024-review-me"
                 },
                 "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
-                "thumbnail": {
-                  "url": "https://github.com/$PR_AUTHOR.png"
-                }
               }
             ]
           }
