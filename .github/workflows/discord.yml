@@ -71,16 +71,13 @@ jobs:
             "content": "<@&$NOTIFY_ID> 🔥 새로운 Pull Request가 등록됐어요!",
             "embeds": [
               {
+                "author": {
+                    "name": "$PR_AUTHOR",
+                    "icon_url": "https://github.com/$PR_AUTHOR.png"
+                },
                 "title": "$PR_TITLE",
                 "url": "$PR_URL",
                 "color": 16777215,
-                "fields": [
-                  {
-                    "inline": true,
-                    "name": "작성자",
-                    "value": "<@$DISCORD_ID>"
-                  }
-                ],
                 "footer": {
                   "text": "2024-review-me"
                 },
