@@ -29,9 +29,9 @@ jobs:
           echo "Finding prefix for PR title"
           PR_TITLE='${{ github.event.pull_request.title }}'
           PR_PREFIX=$(echo $PR_TITLE | cut -d ' ' -f1)
-          if [ "$PR_TITLE" == '[BE]' ]; then
+          if [ "PR_PREFIX" == '[BE]' ]; then
             echo "PR_PREFIX=BE" >> $GITHUB_ENV
-          elif [ "$PR_TITLE" == '[FE]' ]; then
+          elif [ "PR_PREFIX" == '[FE]' ]; then
             echo "PR_PREFIX=FE" >> $GITHUB_ENV
           fi
           echo PR Prefix : ${{ env.PR_PREFIX }}
