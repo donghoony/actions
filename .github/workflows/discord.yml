@@ -57,14 +57,6 @@ jobs:
             WEBHOOK_URL=${{ secrets.DISCORD_FE_PR_WEBHOOK_URL }}
           fi
           
-          if [ ${#PR_BODY} -gt 100 ]; then
-            TRUNCATED_BODY=$(printf "%s" "$PR_BODY" | cut -c1-100)
-            BODY_PREVIEW=$(printf "%s" "$TRUNCATED_BODY..." | sed 's/"/\\\"/g; s/\\/\\\\/g')
-          else
-            BODY_PREVIEW=$(printf "%s" "$PR_BODY" | sed 's/"/\\\"/g; s/\\/\\\\/g')
-          fi
-          echo TimeStamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')
-          
           JSON_FILE=$(mktemp)
           cat > $JSON_FILE <<EOF
           {
@@ -91,3 +83,64 @@ jobs:
           --data @$JSON_FILE \
           $WEBHOOK_URL
           rm $JSON_FILE
+  
+  
+  mention-on-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify on PR Review
+        if: github.event.review.state == 'approved' || github.event.review.state == 'changes_requested'
+        run: |
+          echo "Notify on Discord"
+          
+          PR_URL='${{ github.event.pull_request.html_url }}'
+          PR_TITLE='${{ github.event.pull_request.title }}'
+          PR_AUTHOR='${{ github.event.pull_request.user.login }}'
+          REVIEWER='${{ github.event.review.user.login }}'
+          
+          REVIEWER_DISCORD_ID='${{ env[github.event.review.user.login] }}'
+          AUTHOR_DISCORD_ID='${{ env[github.event.pull_request.user.login] }}'
+          
+          PR_BODY='${{ github.event.pull_request.body }}'
+          if [ "${{ env.PR_PREFIX }}" = 'BE' ]; then
+            NOTIFY_ID=${{ env.backend }}
+            WEBHOOK_URL=${{ secrets.DISCORD_BE_PR_WEBHOOK_URL }}
+          else
+            NOTIFY_ID=${{ env.frontend }}
+            WEBHOOK_URL=${{ secrets.DISCORD_FE_PR_WEBHOOK_URL }}
+          fi
+          
+          JSON_FILE=$(mktemp)
+          cat > $JSON_FILE <<EOF
+          {
+            "content": "<@$AUTHOR_DISCORD_ID> PR에 리뷰가 작성됐어요 🚀",
+            "embeds": [
+              {
+                "author": {
+                    "name": "$REVIEWER",
+                    "icon_url": "https://github.com/$REVIEWER.png"
+                },
+                "title": "$PR_TITLE",
+                "url": "$PR_URL",
+                "color": 16777215,
+                "footer": {
+                  "text": "2024-review-me"
+                },
+                "fields": [
+                  {
+                    "name": "작성자",
+                    "value": "<@$AUTHOR_DISCORD_ID>",
+                    "inline": true
+                  }
+                ],
+                "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+                }
+              ]
+            }
+            EOF
+            cat $JSON_FILE
+            curl -X POST -H 'Content-type: application/json' \
+            --data @$JSON_FILE \
+            $WEBHOOK_URL
+            rm $JSON_FILE
+          
