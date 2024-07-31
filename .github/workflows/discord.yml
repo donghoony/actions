@@ -2,7 +2,7 @@ name: Discord Notification on CI/CD
 
 on:
   pull_request:
-    types: [ opened, edited ]
+    types: [ opened, reopened ] # PR이 열렸을 때에만 작동합니다.
 
 env:
   "donghoony": "206298119661420544"
@@ -33,7 +33,6 @@ jobs:
             echo "PR_PREFIX=FE" >> $GITHUB_ENV
           fi
           echo PR Prefix : $PR_PREFIX
-          echo PR Prefix on env : ${{ env.PR_PREFIX }}
 
       - name: Notify on PR
         if: env.PR_PREFIX == 'BE' || env.PR_PREFIX == 'FE'
@@ -65,7 +64,7 @@ jobs:
                 },
                 "title": "$PR_TITLE",
                 "url": "$PR_URL",
-                "color": 16777215,
+                "color": 6156543,
                 "footer": {
                   "text": "2024-review-me"
                 },
