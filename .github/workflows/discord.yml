@@ -59,7 +59,8 @@ jobs:
           curl -X POST -H 'Content-type: application/json' \
             --data "{\"content\": \"<@&$NOTIFY_ID> 🔥 새로운 Pull Request가 등록됐어요!\", \
               \"embeds\": [{ \
-                \"title\": \"[$PR_TITLE]($PR_URL)\", \
+                \"title\": \"$PR_TITLE\", \
+                \"url\": \"$PR_URL\", \
                 \"description\": \"\", \
                 \"color\": 16777215, \
                 \"fields\": [{ \
@@ -73,4 +74,3 @@ jobs:
                 \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\" \
               }]}" \
             $WEBHOOK_URL
-          ``` 
