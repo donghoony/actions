@@ -9,16 +9,16 @@ on:
     types: [ opened, reopened ] # 이슈 열리면 단순 안내 메시지 전송
 
 env:
-  "donghoony": 206298119661420544
-  "chysis": 243991296060948491
-  "badahertz52": 1165830186990850110
-  "ImxYJL": 859318944195149855
-  "Kimprodp": 1164111111193366580
-  "nayonsoso": 710749110570975243
-  "skylar1220": 971312723260493834
-  "soosoo22": 1162754699099906169
-  "backend": 1263405654534525051
-  "frontend": 1263406763382931467
+  "donghoony": "206298119661420544"
+  "chysis": "243991296060948491"
+  "badahertz52": "1165830186990850110"
+  "ImxYJL": "859318944195149855"
+  "Kimprodp": "1164111111193366580"
+  "nayonsoso": "710749110570975243"
+  "skylar1220": "971312723260493834"
+  "soosoo22": "1162754699099906169"
+  "backend": "1263405654534525051"
+  "frontend": "1263406763382931467"
 
 jobs:
   notify-on-pr:
@@ -27,13 +27,14 @@ jobs:
       - name: Find prefix for PR title
         run: |
           echo "Finding prefix for PR title"
-          PR_TITLE=$(jq -r .pull_request.title $GITHUB_EVENT_PATH)
-          PR_PREFIX=$(echo $PR_TITLE | cut -d' ' -f1)
+          PR_TITLE=${{ github.event.pull_request.title }}
+          PR_PREFIX=$(echo $PR_TITLE | cut -d ' ' -f1)
           if [ "$PR_TITLE" == '[BE]' ]; then
             echo "PR_PREFIX=[BE]" >> $GITHUB_ENV
           elif [ "$PR_TITLE" == '[FE]' ]; then
             echo "PR_PREFIX=[FE]" >> $GITHUB_ENV
           fi
+          echo PR Prefix : $PR_PREFIX
 
       - name: Notify on PR
         if: env.PR_PREFIX == '[BE]' || env.PR_PREFIX == '[FE]'
