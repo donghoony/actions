@@ -59,9 +59,9 @@ jobs:
           fi
           
           if [ "${{ github.event.review.state }}" = 'approved' ]; then
-            COMMENT="PR이 Approved 되었습니다 🚀"
+            COMMENT="PR Approved 되었습니다 🚀"
           else
-            COMMENT="PR에 수정 요구사항이 있어요, 반영해주세요 👩‍💻"
+            COMMENT="PR에 수정 요구사항이 있습니다 👀"
           fi
 
           JSON_FILE=$(mktemp)
