@@ -68,7 +68,7 @@ jobs:
           JSON_FILE=$(mktemp)
           cat > $JSON_FILE <<EOF
           {
-            "content": "<@&$NOTIFY_ID> 🔥 새로운 Pull Request가 등록됐어요!",
+            "content": "<@&$NOTIFY_ID> 새로운 Pull Request가 등록됐어요 🔥",
             "embeds": [
               {
                 "author": {
