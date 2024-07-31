@@ -43,15 +43,12 @@ jobs:
         if: env.PR_PREFIX == 'BE' || env.PR_PREFIX == 'FE'
         run: |
           echo "Notify on Discord"
+          
           PR_URL='${{ github.event.pull_request.html_url }}'
           PR_TITLE='${{ github.event.pull_request.title }}'
           PR_AUTHOR='${{ github.event.sender.login }}'
           DISCORD_ID='${{ env[github.event.sender.login] }}'
           PR_BODY='${{ github.event.pull_request.body }}'
-          ESCAPED_BODY=$(printf "%s" "$PR_BODY" | cut -c1-200)
-          ESCAPED_PREVIEW=$(printf "%s" "$ESCAPED_BODY" | sed 's/"/\\"/g')
-          echo Prefix: ${{ env.PR_PREFIX }}
-          echo Preview: $ESCAPED_PREVIEW
           if [ "${{ env.PR_PREFIX }}" = 'BE' ]; then
             NOTIFY_ID=${{ env.backend }}
             WEBHOOK_URL=${{ secrets.DISCORD_BE_PR_WEBHOOK_URL }}
@@ -59,7 +56,15 @@ jobs:
             NOTIFY_ID=${{ env.frontend }}
             WEBHOOK_URL=${{ secrets.DISCORD_FE_PR_WEBHOOK_URL }}
           fi
+          
+          if [ ${#PR_BODY} -gt 100 ]; then
+            TRUNCATED_BODY=$(printf "%s" "$PR_BODY" | cut -c1-100)
+            BODY_PREVIEW=$(printf "%s" "$TRUNCATED_BODY..." | sed 's/"/\\\"/g; s/\\/\\\\/g')
+          else
+            BODY_PREVIEW=$(printf "%s" "$PR_BODY" | sed 's/"/\\\"/g; s/\\/\\\\/g')
+          fi
           echo TimeStamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          
           JSON_FILE=$(mktemp)
           cat > $JSON_FILE <<EOF
           {
@@ -68,7 +73,7 @@ jobs:
               {
                 "title": "$PR_TITLE",
                 "url": "$PR_URL",
-                "description": "$ESCAPED_PREVIEW",
+                "description": "$BODY_PREVIEW",
                 "color": 16777215,
                 "fields": [
                   {
