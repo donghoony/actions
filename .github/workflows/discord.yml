@@ -55,6 +55,7 @@ jobs:
             NOTIFY_ID=${{ env.frontend }}
             WEBHOOK_URL=${{ secrets.DISCORD_FE_PR_WEBHOOK_URL }}
           fi
+          echo TimeStamp: '$(date -u +'%Y-%m-%dT%H:%M:%SZ')'
           curl -X POST -H 'Content-type: application/json' \
             --data "{\"content\": \"<@&$NOTIFY_ID>\", \
                      \"embeds\": [{ \
