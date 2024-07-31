@@ -30,14 +30,14 @@ jobs:
           PR_TITLE='${{ github.event.pull_request.title }}'
           PR_PREFIX=$(echo $PR_TITLE | cut -d ' ' -f1)
           if [ "$PR_TITLE" == '[BE]' ]; then
-            echo "PR_PREFIX='[BE]'" >> $GITHUB_ENV
+            echo "PR_PREFIX=BE" >> $GITHUB_ENV
           elif [ "$PR_TITLE" == '[FE]' ]; then
-            echo "PR_PREFIX='[FE]'" >> $GITHUB_ENV
+            echo "PR_PREFIX=FE" >> $GITHUB_ENV
           fi
           echo PR Prefix : $PR_PREFIX
 
       - name: Notify on PR
-        if: env.PR_PREFIX == '[BE]' || env.PR_PREFIX == '[FE]'
+        if: env.PR_PREFIX == 'BE' || env.PR_PREFIX == 'FE'
         run: |
           echo "Notify on Discord"
           PR_URL=${{ github.event.pull_request.html_url }}
