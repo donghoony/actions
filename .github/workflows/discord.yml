@@ -58,21 +58,32 @@ jobs:
             WEBHOOK_URL=${{ secrets.DISCORD_FE_PR_WEBHOOK_URL }}
           fi
           echo TimeStamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          JSON_FILE=$(mktemp)
+          cat > $JSON_FILE <<EOF
+          {
+            "content": "<@&$NOTIFY_ID> 🔥 새로운 Pull Request가 등록됐어요!",
+            "embeds": [
+              {
+                "title": "$PR_TITLE",
+                "url": "$PR_URL",
+                "description": "$ESCAPED_BODY",
+                "color": 16777215,
+                "fields": [
+                  {
+                    "inline": true,
+                    "name": "작성자",
+                    "value": "<@$DISCORD_ID>"
+                  }
+                ],
+                "footer": {
+                  "text": "2024-review-me"
+                },
+                "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+              }
+            ]
+          }
+          EOF
           curl -X POST -H 'Content-type: application/json' \
-            --data "{\"content\": \"<@&$NOTIFY_ID> 🔥 새로운 Pull Request가 등록됐어요!\", \
-              \"embeds\": [{ \
-                \"title\": \"$PR_TITLE\", \
-                \"url\": \"$PR_URL\", \
-                \"description\": \"$TRUNCATED_BODY\", \
-                \"color\": 16777215, \
-                \"fields\": [{ \
-                  \"inline\": true, \
-                  \"name\": \"작성자\", \
-                  \"value\": \"<@$DISCORD_ID>\" \
-                }], \
-                \"footer\": { \
-                  \"text\": \"2024-review-me\" \
-                }, \
-                \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\" \
-              }]}" \
-            $WEBHOOK_URL
+          --data @$JSON_FILE \
+          $WEBHOOK_URL
+          rm $JSON_FILE
